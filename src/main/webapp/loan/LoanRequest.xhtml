@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Created by Sai Nikhita Nayani on 2023.9.3
+  - Copyright © 2023 Sai Nikhita nayani. All rights reserved.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- Do not enter tags before the composition line since they are ignored by JSF -->
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Loan Request" />
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <div align="center">
+            <h:form id="LoanDataForm">
+                <p>&nbsp;</p>   <!-- Leave a blank line on top (nbsp = Non-Breakable SPace) -->
+                <!-- The image is styled to decrease in size as the page width decreases -->
+                <h:graphicImage value="#{resource['images:LoanApplication.jpg']}" class="scalableImage"/>
+                <br/><br/>
+                <h1>Enter Your Auto Loan Data</h1>
+                <br/>
+                <!--
+                decimalPlaces="0"   sets the inputNumber to be integer allowing only numbers to be entered
+                decimalPlaces="N"   sets the inputNumber to be real with N decimal places allowing only numbers and period to be entered
+                symbolPosition="p"  symbol is shown as prefix, before the number
+                symbolPosition="s"  symbol is shown as suffix, after the number
+                class               specifies the name of the style defined in the CSS file siteStyles.css
+                -->
+                <h:panelGrid columns="2" cellpadding="5" columnClasses="panelGridColumn1, panelGridColumn2">
+                    <!-- Row 1 Column 1 -->
+                    <p:outputLabel for="principalAmount" value="Principal Amount Borrowed:" class="fieldLabel" />
+                    <!-- Row 1 Column 2 -->
+                    <p:inputNumber id="principalAmount"
+                                   value="#{autoLoan.principalAmount}"
+                                   decimalPlaces="0" thousandSeparator=","
+                                   symbol="$" symbolPosition="p"
+                                   required="true" requiredMessage="Please Enter Principal Amount Borrowed!">
+                        <f:validateDoubleRange minimum="1000" maximum="1000000"/>
+                    </p:inputNumber>
+
+                    <!-- Row 2 Column 1 -->
+                    <p:outputLabel for="interestRatePercent" value="Interest Rate Percentage:" class="fieldLabel"/>
+                    <!-- Row 2 Column 2 -->
+                    <p:inputNumber id="interestRatePercent"
+                                   value="#{autoLoan.interestRatePercent}"
+                                   decimalPlaces="3"
+                                   symbol="%" symbolPosition="s"
+                                   required="true" requiredMessage="Please Enter Interest Rate Percentage!">
+                        <f:validateDoubleRange minimum="0.25" maximum="30.00"/>
+                    </p:inputNumber>
+
+                    <!-- Row 3 Column 1 -->
+                    <p:outputLabel for="numberOfYears" value="Number of Years:" class="fieldLabel" />
+                    <!-- Row 3 Column 2 -->
+                    <p:inputNumber id="numberOfYears"
+                                   value="#{autoLoan.numberOfYears}"
+                                   decimalPlaces="2"
+                                   required="true" requiredMessage="Please Enter Number of Years!">
+                        <f:validateDoubleRange minimum="1" maximum="30"/>
+                    </p:inputNumber>
+                </h:panelGrid>
+                <br/><br/>
+                <!--
+                <p:commandButton> performs the Submit of the form in which it is located, i.e. "loanDataEntryForm",
+                by initiating HTTP request/response cycle from within this JSF page.
+
+                When the "Calculate Loan" button is clicked on, the calculateLoan() method of
+                the autoLoan CDI-managed Java bean running on the server computer is executed
+                after first rendering the current page.
+
+                Asynchronous JavaScript and XML (AJAX):
+                        When <p:commandButton> Submits an asynchronous request from the client to the server,
+                        the server sends back a response that is used to update the JSF page.
+                        The term AJAX refers to this interaction between the client and server.
+
+                The "ajax" attribute of <p:commandButton> specifies the Submit mode:
+                        ajax="true" (default)
+                            causes the Submit to be made with Ajax. This means that the server
+                            will send back a response that is used to update the current JSF page.
+
+                        ajax="false" causes the Submit to be made without Ajax. This means that the server
+                            will not send back a response that is used to update current JSF page.
+
+                Clicking the commandButton initiates form submission, which causes the current page to be
+                first rendered before the CDI-managed java bean's method is executed. During the rendering,
+                each <p:inputNumber> data field with required="true" is tested if a value is entered.
+                If a value is not entered, the requiredMessage attribute value of <p:inputNumber> is
+                displayed as an error message. Value ranges are tested using the validateDoubleRange tag.
+                If all fields pass the validation tests, then the CDI-managed java bean's method is executed.
+                -->
+                <p:commandButton value="Calculate Loan" icon="fas fa-calculator" styleClass="rounded-button"
+                                 ajax="false" action="#{autoLoan.calculateLoan()}" />
+                &nbsp;
+                <!--
+                To clear entered input data, property values of the CDI-managed java bean must be reset.
+
+                <p:commandButton> renders a Submit action and therefore it must be specified within <h:form>.
+
+                We want the <p:commandButton> to perform its 'action' or 'actionListener' immediately
+                without first rendering the current JSF page by using the attribute immediate="true".
+
+                JSF application lifecycle execute phase contains the following subphases:
+
+                    1. Restore View Phase
+                    2. Apply Request Values Phase
+                    3. Process Validations Phase
+                    4. Update Model Values Phase
+                    5. Invoke Application Phase
+                    6. Render Response Phase
+
+                immediate="true" causes the execution of only the Apply Request Values Phase.
+                Therefore, the Process Validations Phase is skipped implying that the
+                validation tests in the JSF page are not processed.
+
+                Input components keep their local values at state when validation fails.
+                p:resetInput is used to clear the cached values from state so that
+                components retrieve their values from the CDI-managed java bean instead.
+                -->
+                <p:commandButton value="Clear" icon="fas fa-undo" styleClass="ui-button-outlined"
+                                 ajax="false" immediate="true"
+                                 actionListener="#{autoLoan.clear()}" >
+
+                    <p:resetInput target="LoanDataForm"/>
+                </p:commandButton>
+
+            </h:form>
+        </div>
+        <br/><br/>
+    </ui:define>
+
+</ui:composition>
+<!-- Do not enter tags after the composition line since they are ignored by JSF -->
+
+</html>

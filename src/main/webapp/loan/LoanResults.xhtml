@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Created by Sai Nikhita Nayani on 2023.9.3
+  - Copyright © 2023 Sai Nikhita nayani. All rights reserved.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- Do not enter tags before the composition line since they are ignored by JSF -->
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Loan Results" />
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <div align="center">
+            <h:form id="LoanResultsForm">
+                <p>&nbsp;</p>   <!-- Leave a blank line on top (nbsp = Non-Breakable SPace) -->
+                <p:graphicImage url="/resources/images/LoanApproved.jpg" class="scalableImage" />
+                <br /><br />
+                <h1>Auto Loan Processing Results</h1>
+                <br />
+                <h:panelGrid columns="2" cellpadding="5" columnClasses="panelGridColumn1, panelGridColumn2">
+                    <!-- Row 1 Column 1 -->
+                    <h:outputText value="Principal Amount Borrowed:" class="fieldLabel" />
+                    <!-- Row 1 Column 2 -->
+                    <h:outputText value="#{autoLoan.principalAmount}" class="fieldValue" >
+                        <f:convertNumber type="currency" currencySymbol="$" locale="en_US" />
+                    </h:outputText>
+
+                    <!-- Row 2 Column 1 -->
+                    <h:outputText value="Interest Rate Percentage:" class="fieldLabel" />
+                    <!-- Row 2 Column 2 -->
+                    <h:outputText value="#{autoLoan.interestRatePercent}%" class="fieldValue" />
+
+                    <!-- Row 3 Column 1 -->
+                    <h:outputText value="Number of Years to Pay the Loan:" class="fieldLabel" />
+                    <!-- Row 3 Column 2 -->
+                    <h:outputText value="#{autoLoan.numberOfYears}" class="fieldValue" >
+                        <f:convertNumber type="number" minFractionDigits="2" />
+                    </h:outputText>
+
+                    <!-- Row 4 Column 1 -->
+                    <h:outputText value="Monthly Payment:" class="fieldLabel" />
+                    <!-- Row 4 Column 2 -->
+                    <h:outputText value="#{autoLoan.monthlyPayment}" class="fieldValue" >
+                        <f:convertNumber type="currency" currencySymbol="$" locale="en_US" />
+                    </h:outputText>
+
+                    <!-- Row 5 Column 1 -->
+                    <h:outputText value="Total Interest:" class="fieldLabel" />
+                    <!-- Row 5 Column 2 -->
+                    <h:outputText value="#{autoLoan.totalInterest}" class="fieldValue" >
+                        <f:convertNumber type="currency" currencySymbol="$" locale="en_US" />
+                    </h:outputText>
+                </h:panelGrid>
+                <br/><br/>
+                <!-- Clicking the Go Back button shows the LoanRequest.xhtml page -->
+                <p:button outcome="/loan/LoanRequest" value="Go Back" icon="fas fa-arrow-left" styleClass="ui-button-outlined" />
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>
+<!-- Do not enter tags after the composition line since they are ignored by JSF -->
+
+</html>
